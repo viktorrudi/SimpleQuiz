@@ -28,9 +28,6 @@ function Task({ route, navigation, dispatch }) {
   }
 
   const resetGame = () => {
-    // Updating info displayed in home screen
-    dispatch({ type: 'UPDATE_TOTAL_CORRECT', payload: correctCount })
-
     setIsEnded(false)
     setCorrectCount(0)
     navigation.navigate('TaskSetup')
@@ -76,7 +73,7 @@ function Task({ route, navigation, dispatch }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    alignContent: 'space-between',
   },
   bottomContainer: {
     flex: 1,

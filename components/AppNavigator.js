@@ -2,8 +2,10 @@ import React from 'react'
 import Home from './Home'
 import TaskSetup from './TaskSetup'
 import Task from './Task'
+import { Button, View, Text } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
+import { connect } from 'react-redux'
 
 const Stack = createStackNavigator()
 
@@ -18,7 +20,7 @@ const headerStyle = {
   gestureDirection: 'horizontal',
 }
 
-export default function AppNavigator() {
+function AppNavigator({ totalCorrect }) {
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -26,7 +28,7 @@ export default function AppNavigator() {
           name="Home"
           component={Home}
           options={{
-            title: 'Quiz',
+            title: 'Shitty Free Quiz App',
             ...headerStyle,
           }}
         />
@@ -35,6 +37,10 @@ export default function AppNavigator() {
           component={TaskSetup}
           options={{
             title: 'Categories',
+            headerRight: () =>
+              totalCorrect > 0 && (
+                <Button title={`Total Score: ${String(totalCorrect)}`} />
+              ),
             ...headerStyle,
           }}
         />
@@ -50,3 +56,9 @@ export default function AppNavigator() {
     </NavigationContainer>
   )
 }
+
+const mapStateToProps = (state) => ({
+  totalCorrect: state.totalCorrect || 0,
+})
+
+export default connect(mapStateToProps)(AppNavigator)

@@ -13,35 +13,31 @@ export default function Question({
   updateAnswerCount,
 }) {
   const [chosenAnswer, setChosenAnswer] = useState(null)
-  console.log({ chosenAnswer })
   const handleChosenAnswer = (isCorrect) => {
+    const timeToWait = isCorrect ? 600 : 1000
     setChosenAnswer(isCorrect)
     updateAnswerCount(isCorrect)
-    if (!isCorrect) {
-      getNextQuestion(1000, () => {
-        setChosenAnswer(null)
-      })
-    } else {
-      getNextQuestion(400)
-    }
+    getNextQuestion(timeToWait, () => setChosenAnswer(null))
   }
 
-  if (chosenAnswer !== null)
+  const buttonColor = ['#9BDFEC', '#D39ED2', '#FCC5A6', '#FCA2BB']
+  if (chosenAnswer !== null) {
     return (
       <AnswerFeedback isCorrect={chosenAnswer} correctAnswer={correctAnswer} />
     )
+  }
 
   return (
     <View style={styles.container}>
-      <Text h3 style={styles.question}>
+      <Text h4 style={styles.question}>
         {decodeEntities(currentQuestion.question)}
       </Text>
-      {choices.map((choice) => {
+      {choices.map((choice, i) => {
         const isCorrect = choice === correctAnswer
         return (
           <TouchableOpacity
             key={choice}
-            style={styles.choice}
+            style={{ ...styles.choice, backgroundColor: buttonColor[i] }}
             onPress={() => handleChosenAnswer(isCorrect)}
           >
             <Text style={styles.choiceText}>{decodeEntities(choice)}</Text>
@@ -59,14 +55,18 @@ const styles = StyleSheet.create({
   question: {
     marginBottom: 10,
     padding: 20,
+    textAlign: 'center',
   },
   choice: {
     fontSize: 10,
     alignItems: 'center',
-    padding: 20,
-    marginBottom: 5,
+    padding: 27,
+    marginBottom: 0,
+    backgroundColor: 'gray',
   },
   choiceText: {
     fontSize: 20,
+    fontWeight: 'bold',
+    color: '#464646',
   },
 })

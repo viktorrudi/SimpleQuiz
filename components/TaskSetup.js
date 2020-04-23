@@ -11,6 +11,7 @@ export default function TaskSetup({ navigation }) {
       .get('https://opentdb.com/api_category.php')
       .then(({ data }) => setCategories(data.trivia_categories))
   }, [])
+
   if (!categories) return <Text>Get ready!</Text>
   return (
     <ScrollView>

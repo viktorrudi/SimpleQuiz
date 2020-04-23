@@ -1,11 +1,33 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { Text, Button } from 'react-native-elements'
 import { connect } from 'react-redux'
-import { StyleSheet, View, TouchableOpacity } from 'react-native'
+import {
+  StyleSheet,
+  View,
+  Image,
+  TouchableHighlight,
+  Linking,
+} from 'react-native'
+import githubLogo from '../assets/github-logo.jpg'
 
 function Home({ navigation, totalCorrect }) {
   return (
     <View style={styles.container}>
+      <View style={{ position: 'absolute', top: 5, right: 5 }}>
+        <TouchableHighlight
+          onPress={() =>
+            Linking.openURL('https://github.com/viktorrudi/SimpleQuiz')
+          }
+        >
+          <Image
+            style={{
+              width: 40,
+              height: 40,
+            }}
+            source={githubLogo}
+          />
+        </TouchableHighlight>
+      </View>
       <Button title="Start" onPress={() => navigation.navigate('TaskSetup')} />
       <Text h4 style={styles.totalCorrect}>
         Your total score this session:
@@ -13,7 +35,8 @@ function Home({ navigation, totalCorrect }) {
       <Text h1>{totalCorrect}</Text>
       {totalCorrect > 0 && (
         <Text>
-          😲 <Text style={{ fontStyle: 'italic' }}>good job, u smart</Text> 😎
+          😲🤑 <Text style={{ fontStyle: 'italic' }}>good job, u smart</Text>{' '}
+          🥳😎
         </Text>
       )}
     </View>
