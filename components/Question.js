@@ -6,49 +6,48 @@ import { decodeEntities } from '../utils'
 import AnswerFeedback from './AnswerFeedback'
 
 export default function Question({
-  question,
-  allOptions,
+  currentQuestion,
+  choices,
   correctAnswer,
-  updateQuestion,
+  getNextQuestion,
   updateAnswerCount,
 }) {
   const [chosenAnswer, setChosenAnswer] = useState(null)
-  const options = allOptions.sort(() => 0.5 - Math.random())
-
+  console.log({ chosenAnswer })
   const handleChosenAnswer = (isCorrect) => {
     setChosenAnswer(isCorrect)
     updateAnswerCount(isCorrect)
     if (!isCorrect) {
-      setTimeout(updateQuestion, 1000)
+      getNextQuestion(1000, () => {
+        setChosenAnswer(null)
+      })
     } else {
-      updateQuestion(400)
+      getNextQuestion(400)
     }
   }
+
+  if (chosenAnswer !== null)
+    return (
+      <AnswerFeedback isCorrect={chosenAnswer} correctAnswer={correctAnswer} />
+    )
 
   return (
     <View style={styles.container}>
       <Text h3 style={styles.question}>
-        {decodeEntities(question)}
+        {decodeEntities(currentQuestion.question)}
       </Text>
-      {chosenAnswer !== null ? (
-        <AnswerFeedback
-          isCorrect={chosenAnswer}
-          correctAnswer={correctAnswer}
-        />
-      ) : (
-        options.map((option) => {
-          const isCorrect = option === correctAnswer
-          return (
-            <TouchableOpacity
-              key={option}
-              style={styles.option}
-              onPress={() => handleChosenAnswer(isCorrect)}
-            >
-              <Text style={styles.optionText}>{decodeEntities(option)}</Text>
-            </TouchableOpacity>
-          )
-        })
-      )}
+      {choices.map((choice) => {
+        const isCorrect = choice === correctAnswer
+        return (
+          <TouchableOpacity
+            key={choice}
+            style={styles.choice}
+            onPress={() => handleChosenAnswer(isCorrect)}
+          >
+            <Text style={styles.choiceText}>{decodeEntities(choice)}</Text>
+          </TouchableOpacity>
+        )
+      })}
     </View>
   )
 }
@@ -61,13 +60,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     padding: 20,
   },
-  option: {
+  choice: {
     fontSize: 10,
     alignItems: 'center',
     padding: 20,
     marginBottom: 5,
   },
-  optionText: {
+  choiceText: {
     fontSize: 20,
   },
 })
