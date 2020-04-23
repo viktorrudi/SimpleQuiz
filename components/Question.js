@@ -3,6 +3,8 @@ import { Text } from 'react-native-elements'
 import { StyleSheet, View, TouchableOpacity } from 'react-native'
 import { decodeEntities } from '../utils'
 
+import AnswerFeedback from './AnswerFeedback'
+
 export default function Question({
   question,
   allOptions,
@@ -11,17 +13,13 @@ export default function Question({
   updateAnswerCount,
 }) {
   const [chosenAnswer, setChosenAnswer] = useState(null)
-  const options = allOptions.sort((a, b) => 0.5 - Math.random())
+  const options = allOptions.sort(() => 0.5 - Math.random())
 
-  const showCorrectAnswer = (correctAnswer, chosenOption, update) => {
-    setTimeout(update, 1000)
-  }
-
-  const handleChosenAnswer = (isCorrect, chosenOption) => {
+  const handleChosenAnswer = (isCorrect) => {
     setChosenAnswer(isCorrect)
     updateAnswerCount(isCorrect)
     if (!isCorrect) {
-      showCorrectAnswer(correctAnswer, chosenOption, updateQuestion)
+      setTimeout(updateQuestion, 1000)
     } else {
       updateQuestion(400)
     }
@@ -44,7 +42,7 @@ export default function Question({
             <TouchableOpacity
               key={option}
               style={styles.option}
-              onPress={() => handleChosenAnswer(isCorrect, option)}
+              onPress={() => handleChosenAnswer(isCorrect)}
             >
               <Text style={styles.optionText}>{decodeEntities(option)}</Text>
             </TouchableOpacity>
@@ -58,49 +56,18 @@ export default function Question({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: '#61d8f9',
-    marginTop: 50,
-    // justifyContent: 'center',
-  },
-  answerFeedback: {
-    flex: 1,
-    alignItems: 'center',
-    padding: 20,
-    justifyContent: 'center',
   },
   question: {
-    // color: '#fff',
     marginBottom: 10,
     padding: 20,
   },
   option: {
     fontSize: 10,
     alignItems: 'center',
-    // backgroundColor: '#61d8f9',
     padding: 20,
     marginBottom: 5,
   },
   optionText: {
     fontSize: 20,
-    // color: '#fff',
-  },
-  correct: {
-    color: 'green',
-  },
-  incorrect: {
-    color: 'red',
   },
 })
-
-function AnswerFeedback({ isCorrect, correctAnswer }) {
-  const style = isCorrect ? styles.correct : styles.incorrect
-  const message = isCorrect ? 'CORRECT 🙌' : 'WRONG 😔'
-  return (
-    <View style={styles.answerFeedback}>
-      <Text h1 style={style}>
-        {message}
-      </Text>
-      {!isCorrect && <Text h3>Correct: {correctAnswer}</Text>}
-    </View>
-  )
-}
