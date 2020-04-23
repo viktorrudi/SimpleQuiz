@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react'
-import { Text } from 'react-native-elements'
-import ErrorBoundary from 'react-native-error-boundary'
 import { StyleSheet, View } from 'react-native'
+import { Text } from 'react-native-elements'
+import { connect } from 'react-redux'
+import axios from 'axios'
+
 import Question from './Question'
 import GameEnd from './GameEnd'
-import axios from 'axios'
+
 import * as CONST from '../constants'
 
-export default function Task({ route, navigation }) {
+function Task({ route, navigation, dispatch }) {
   const [questions, setQuestions] = useState(null)
   const [onQuestionIndex, setQuestionIndex] = useState(0)
   const [correctCount, setCorrectCount] = useState(0)
   const [isEnded, setIsEnded] = useState(false)
 
+  // Append fre$$$hh questions on mount
   useEffect(() => {
     const { category } = route.params
     axios
@@ -22,19 +25,25 @@ export default function Task({ route, navigation }) {
 
   const updateAnswerCount = (isCorrect) => {
     setCorrectCount((count) => count + Number(isCorrect))
-    setIsEnded(onQuestionIndex === 9)
   }
 
   const resetGame = () => {
-    setCorrectCount(0)
+    // Updating info displayed in home screen
+    dispatch({ type: 'UPDATE_TOTAL_CORRECT', payload: correctCount })
+
     setIsEnded(false)
+    setCorrectCount(0)
     navigation.navigate('TaskSetup')
   }
 
   const getNextQuestion = (wait = 0, callback = () => {}) => {
     setTimeout(() => {
-      setQuestionIndex((idx) => idx + 1)
-      callback()
+      if (onQuestionIndex === 9) {
+        setIsEnded(true)
+      } else {
+        setQuestionIndex((idx) => idx + 1)
+        callback()
+      }
     }, wait)
   }
 
@@ -85,3 +94,5 @@ const styles = StyleSheet.create({
     fontSize: 25,
   },
 })
+
+export default connect(null, (dispatch) => ({ dispatch }))(Task)

@@ -1,13 +1,18 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import ErrorBoundary from 'react-native-error-boundary'
-import { ThemeProvider, Button } from 'react-native-elements'
+import { ThemeProvider } from 'react-native-elements'
+import { createStore, applyMiddleware } from 'redux'
+import { Provider } from 'react-redux'
+import thunk from 'redux-thunk'
 
-import { View } from 'react-native'
+import reducer from './reducers'
 
 import AppNavigator from './components/AppNavigator'
 
+const store = createStore(reducer, applyMiddleware(thunk))
 const theme = {
   Button: {
+    borderRadius: 500,
     titleStyle: {
       padding: 40,
       fontSize: 60,
@@ -19,9 +24,11 @@ const theme = {
 export default function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider theme={theme}>
-        <AppNavigator />
-      </ThemeProvider>
+      <Provider store={store}>
+        <ThemeProvider theme={theme}>
+          <AppNavigator />
+        </ThemeProvider>
+      </Provider>
     </ErrorBoundary>
   )
 }

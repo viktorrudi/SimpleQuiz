@@ -1,18 +1,19 @@
 export function decodeEntities(encodedString) {
-  var translate_re = /&(nbsp|amp|quot|lt|gt);/g
-  var translate = {
+  const translate_re = /&(nbsp|eacute|ocirc|amp|quot|lt|gt);/g
+  const translate = {
     nbsp: ' ',
+    eacute: 'é',
+    Eacute: 'È',
+    ocirc: 'ô',
     amp: '&',
     quot: '"',
     lt: '<',
     gt: '>',
   }
   return encodedString
-    .replace(translate_re, function (match, entity) {
-      return translate[entity]
-    })
-    .replace(/&#(\d+);/gi, function (match, numStr) {
-      var num = parseInt(numStr, 10)
+    .replace(translate_re, (_, entity) => translate[entity])
+    .replace(/&#(\d+);/gi, (_, numStr) => {
+      const num = parseInt(numStr)
       return String.fromCharCode(num)
     })
 }

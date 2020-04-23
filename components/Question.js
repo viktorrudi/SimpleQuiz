@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Text } from 'react-native-elements'
 import { StyleSheet, View, TouchableOpacity } from 'react-native'
 import { decodeEntities } from '../utils'
