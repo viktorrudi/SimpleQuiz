@@ -1,9 +1,16 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Text } from 'react-native-elements'
 import { StyleSheet, View, TouchableOpacity } from 'react-native'
 import { decodeEntities } from '../utils'
 
+import { Bar } from 'react-native-progress'
+
 import AnswerFeedback from './AnswerFeedback'
+
+const initial = {
+  timeLimit: 1,
+  isTimeout: false,
+}
 
 export default function Question({
   currentQuestion,
@@ -11,7 +18,11 @@ export default function Question({
   correctAnswer,
   getNextQuestion,
   updateAnswerCount,
+  onQuestionIndex,
 }) {
+  const buttonColor = ['#9BDFEC', '#D39ED2', '#FCC5A6', '#FCA2BB']
+
+  const [isTimeout, setIsTimeout] = useState(false)
   const [chosenAnswer, setChosenAnswer] = useState(null)
   const handleChosenAnswer = (isCorrect) => {
     const timeToWait = isCorrect ? 600 : 1000
@@ -20,10 +31,34 @@ export default function Question({
     getNextQuestion(timeToWait, () => setChosenAnswer(null))
   }
 
-  const buttonColor = ['#9BDFEC', '#D39ED2', '#FCC5A6', '#FCA2BB']
+  // Question timer
+  const [questionTimer, setQuestionTimer] = useState(initial.timeLimit)
+  useEffect(() => {
+    const timer =
+      questionTimer > 0 &&
+      setInterval(() => setQuestionTimer(questionTimer - 0.01), 50)
+
+    if (questionTimer < 0.01 && chosenAnswer === null) {
+      setIsTimeout(true)
+      handleChosenAnswer(false)
+    }
+
+    return () => clearInterval(timer)
+  }, [questionTimer])
+
+  // Reset timer on new question
+  useEffect(() => {
+    setQuestionTimer(initial.timeLimit)
+    setIsTimeout(initial.isTimeout)
+  }, [onQuestionIndex])
+
   if (chosenAnswer !== null) {
     return (
-      <AnswerFeedback isCorrect={chosenAnswer} correctAnswer={correctAnswer} />
+      <AnswerFeedback
+        isTimeout={isTimeout}
+        isCorrect={chosenAnswer}
+        correctAnswer={correctAnswer}
+      />
     )
   }
 
@@ -33,17 +68,37 @@ export default function Question({
         {decodeEntities(currentQuestion.question)}
       </Text>
       {choices.map((choice, i) => {
-        const isCorrect = choice === correctAnswer
+        const correctStatus = choice === correctAnswer
         return (
           <TouchableOpacity
             key={choice}
             style={{ ...styles.choice, backgroundColor: buttonColor[i] }}
-            onPress={() => handleChosenAnswer(isCorrect)}
+            onPress={() => handleChosenAnswer(correctStatus)}
           >
             <Text style={styles.choiceText}>{decodeEntities(choice)}</Text>
           </TouchableOpacity>
         )
       })}
+      <View
+        style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          bottom: -80,
+          zIndex: 1,
+          opacity: 0.6,
+        }}
+      >
+        {/* ProgressBar */}
+        <Bar
+          style={{ borderWidth: 0 }}
+          progress={questionTimer}
+          width={null}
+          borderRadius={0}
+          height={80}
+          color="#9BDFEC"
+        />
+      </View>
     </View>
   )
 }

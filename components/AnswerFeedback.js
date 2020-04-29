@@ -3,9 +3,14 @@ import { Text } from 'react-native-elements'
 import { StyleSheet, View } from 'react-native'
 import { decodeEntities } from '../utils'
 
-export default function AnswerFeedback({ isCorrect, correctAnswer }) {
+export default function AnswerFeedback({
+  isCorrect,
+  correctAnswer,
+  isTimeout,
+}) {
   const style = isCorrect ? styles.correct : styles.incorrect
-  const message = isCorrect ? 'CORRECT 🙌' : 'WRONG 😔'
+  let message = isCorrect ? 'CORRECT 🙌' : 'WRONG 😔'
+  if (isTimeout) message = 'TOO LATE!'
   return (
     <View style={styles.answerFeedback}>
       <Text h1 style={style}>

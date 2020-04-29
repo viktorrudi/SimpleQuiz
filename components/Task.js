@@ -33,13 +33,13 @@ function Task({ route, navigation, dispatch }) {
     navigation.navigate('TaskSetup')
   }
 
-  const getNextQuestion = (wait = 0, callback = () => {}) => {
+  const getNextQuestion = (wait = 0, callback) => {
     setTimeout(() => {
       if (onQuestionIndex === 9) {
         setIsEnded(true)
       } else {
         setQuestionIndex((idx) => idx + 1)
-        callback()
+        callback?.()
       }
     }, wait)
   }
@@ -50,13 +50,15 @@ function Task({ route, navigation, dispatch }) {
   }
   const currentQuestion = questions[onQuestionIndex]
   const choices = [
-    ...currentQuestion.incorrect_answers,
-    currentQuestion.correct_answer,
+    ...currentQuestion?.incorrect_answers,
+    currentQuestion?.correct_answer,
   ].sort(() => 0.5 - Math.random())
+
   return (
     <View style={styles.container}>
       <Question
         currentQuestion={currentQuestion}
+        onQuestionIndex={onQuestionIndex}
         choices={choices}
         correctAnswer={currentQuestion.correct_answer}
         getNextQuestion={getNextQuestion}
