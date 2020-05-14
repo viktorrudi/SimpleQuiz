@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Text } from 'react-native-elements'
 import { StyleSheet, View, TouchableOpacity } from 'react-native'
-import { decodeEntities } from '../utils'
-
 import { Bar } from 'react-native-progress'
 
 import AnswerFeedback from './AnswerFeedback'
@@ -21,9 +19,10 @@ export default function Question({
   onQuestionIndex,
 }) {
   const buttonColor = ['#9BDFEC', '#D39ED2', '#FCC5A6', '#FCA2BB']
-
-  const [isTimeout, setIsTimeout] = useState(false)
+  const [questionTimer, setQuestionTimer] = useState(initial.timeLimit)
   const [chosenAnswer, setChosenAnswer] = useState(null)
+  const [isTimeout, setIsTimeout] = useState(false)
+
   const handleChosenAnswer = (isCorrect) => {
     const timeToWait = isCorrect ? 600 : 1000
     setChosenAnswer(isCorrect)
@@ -32,7 +31,6 @@ export default function Question({
   }
 
   // Question timer
-  const [questionTimer, setQuestionTimer] = useState(initial.timeLimit)
   useEffect(() => {
     const timer =
       questionTimer > 0 &&
@@ -65,7 +63,7 @@ export default function Question({
   return (
     <View style={styles.container}>
       <Text h4 style={styles.question}>
-        {decodeEntities(currentQuestion.question)}
+        {currentQuestion.question}
       </Text>
       {choices.map((choice, i) => {
         const correctStatus = choice === correctAnswer
@@ -75,7 +73,7 @@ export default function Question({
             style={{ ...styles.choice, backgroundColor: buttonColor[i] }}
             onPress={() => handleChosenAnswer(correctStatus)}
           >
-            <Text style={styles.choiceText}>{decodeEntities(choice)}</Text>
+            <Text style={styles.choiceText}>{choice}</Text>
           </TouchableOpacity>
         )
       })}

@@ -9,22 +9,28 @@ export default function TaskSetup({ navigation }) {
   useEffect(() => {
     axios
       .get('https://opentdb.com/api_category.php')
-      .then(({ data }) => setCategories(data.trivia_categories))
+      .then(({ data }) =>
+        setCategories(
+          data.trivia_categories.sort((a, b) => a.name.localeCompare(b.name))
+        )
+      )
   }, [])
 
   if (!categories) return <Text>Get ready!</Text>
   return (
     <ScrollView>
-      {categories.map(({ id, name }) => (
-        <ListItem
-          bottomDivider
-          key={id}
-          title={name}
-          onPress={() =>
-            navigation.navigate('Task', { category: { id, name } })
-          }
-        />
-      ))}
+      {categories
+        .sort((a, b) => a.name > b.name)
+        .map(({ id, name }) => (
+          <ListItem
+            bottomDivider
+            key={id}
+            title={name}
+            onPress={() =>
+              navigation.navigate('Task', { category: { id, name } })
+            }
+          />
+        ))}
     </ScrollView>
   )
 }

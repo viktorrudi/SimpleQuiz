@@ -9,6 +9,9 @@ import GameEnd from './GameEnd'
 
 import * as CONST from '../constants'
 
+const Entities = require('html-entities').XmlEntities
+const { decode } = new Entities()
+
 function Task({ route, navigation, dispatch }) {
   const [questions, setQuestions] = useState(null)
   const [onQuestionIndex, setQuestionIndex] = useState(0)
@@ -18,9 +21,16 @@ function Task({ route, navigation, dispatch }) {
   // Append fre$$$hh questions on mount
   useEffect(() => {
     const { category } = route.params
-    axios
-      .get(CONST.API.getURL(10, category.id))
-      .then(({ data }) => setQuestions(data.results))
+    axios.get(CONST.API.getURL(10, category.id)).then(({ data }) =>
+      setQuestions(
+        data.results.map((q) => ({
+          ...q,
+          question: decode(q.question),
+          correct_answer: decode(q.correct_answer),
+          incorrect_answers: q.incorrect_answers.map((a) => decode(a)),
+        }))
+      )
+    )
   }, [])
 
   const updateAnswerCount = (isCorrect) => {

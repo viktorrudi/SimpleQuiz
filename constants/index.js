@@ -11,7 +11,3 @@ export const API = {
   getURL: (amount = 10, categoryID = 0) =>
     `${BASE.API_URL}amount=${amount}&category=${categoryID}`,
 }
-
-const ANSWER_TYPE = {
-  TIME_OUT: 'TIME_OUT',
-}
